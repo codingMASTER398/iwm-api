@@ -1,11 +1,6 @@
 const fetch = require("node-fetch")
-const EventEmitter = require('events')
 
 module.exports.client = function() {
-
-    var events = new EventEmitter()
-    this.events = events
-
     this.session = {
         loggedIn:false
     }
@@ -14,7 +9,6 @@ module.exports.client = function() {
         this.session = {
             loggedIn:false
         }
-        events.emit("logout")
     }
 
     this.login = (username,password,version)=> {
@@ -52,7 +46,6 @@ module.exports.client = function() {
                     }
 
                     resolve(this.session)
-                    events.emit("login",this.session)
 
                     break
                 default:
@@ -124,8 +117,6 @@ module.exports.client = function() {
             for (const property in parameters) {
                 searchUrl = searchUrl.concat(`&${property}=${parameters[property]}`)
             }
-
-            console.log(searchUrl)
 
             let response;
             if(this.session.loggedIn){
@@ -243,7 +234,6 @@ module.exports.client = function() {
         //{ "Country": 10, "PantsColor": 12058802, "HatSpr": 0, "HairColor": 0, "CapeColor": 0, "ShoesColor": 16777215, "ID": 212176, "ShirtColor": 12124343, "SkinColor": 16748460 }
         return new Promise(async(resolve,reject)=>{
             if(this.session.loggedIn){
-                console.log(`http://make.fangam.es/api/v1/user/${this.session.userId}`)
                 let response = await fetch(`http://make.fangam.es/api/v1/user/${this.session.userId}`,{
                     headers:{
                         "Authorization":this.session.token,
@@ -258,7 +248,6 @@ module.exports.client = function() {
                         resolve(response.json())
                         break;
                     case 400:
-                        console.log(response)
                         reject(`Bad request`)
                         break;
                     default:
@@ -366,6 +355,32 @@ module.exports.client = function() {
                 switch(response.status){
                     case 200:
                         resolve(await response.json())
+                        break;
+                    default:
+                        reject(`Status code ${response.status}`)
+                        break;
+                }
+            }else{
+                reject(`Not logged in!`)
+            }
+        })
+    }
+
+    this.rateLevel = (id,rating)=>{
+        return new Promise(async(resolve,reject)=>{
+            if(this.session.loggedIn){
+                
+                let response = await fetch(`http://make.fangam.es/api/v1/map/${id}/rating`,{
+                    headers:{
+                        "Authorization":this.session.token
+                    },
+                    body:JSON.stringify({"Rating":rating}),
+                    method:"POST"
+                })
+                
+                switch(response.status){
+                    case 200:
+                        resolve()
                         break;
                     default:
                         reject(`Status code ${response.status}`)
