@@ -52,6 +52,7 @@ console.log(await client.search({
 
 await client.playLevel(4269) // Level ID
 // Gives you level data (you can't ACTUALLY play it)
+// The "MapData" attribute of the response is a base64 encoded file which can then be unzipped (using zlib or an alternative) to get the xml structure (.map file)
 
 await client.tagLevel(420,[6,9]) // Tag a level with tag ids
 
