@@ -30,7 +30,7 @@ console.log(await client.leaderboardLevel(4269,5,0))
 console.log(await client.search({
     "code": "AAAABBBB"
 }))
-
+//Note: The level code must not contain a dash. It must be only the 8 letters.
 // By whatever else
 
 console.log(await client.search({
